@@ -1,0 +1,10 @@
+# 灵感指尖·五行开运美甲 - Python 依赖
+# 安装: pip install -r requirements.txt (建议在 venv 中)
+
+# 农历与八字排盘（干支、节气、八字）
+# PyPI 当前最高版本为 1.4.x，使用兼容版本
+lunar-python>=1.4.0
+
+# 可选：若通过 HTTP 调用 Python，可使用 FastAPI + uvicorn
+# fastapi>=0.115.0
+# uvicorn[standard]>=0.32.0

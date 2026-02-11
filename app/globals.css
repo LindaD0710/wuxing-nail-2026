@@ -1,0 +1,384 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --morandi-cream: #f5f0f8;
+  --morandi-stone: #e8e4f0;
+  --ice-blue: #e8e4f5;
+  --font-sans: "Noto Sans SC", system-ui, sans-serif;
+  --touch-min: 2.75rem;
+  /* 晨曦紫 → 浅玫瑰粉：高亮度、无硬边，参考图内色彩运营 */
+  --dawn-periwinkle: #e4dff0;
+  --dawn-lavender: #ebe2f4;
+  --dawn-soft: #f0e6f2;
+  --rose-warm: #f5e8f0;
+  --rose-pale: #faf0f5;
+  --pearl-highlight: rgba(255, 255, 255, 0.5);
+  --glow-spill: rgba(240, 228, 248, 0.35);
+  --mystic-1: #f3eff8;
+  --mystic-2: #ebe4f5;
+  --mystic-3: #e4dcef;
+  --mystic-4: #d4c8e8;
+  --mystic-5: #c9b8e0;
+  --mystic-glow: rgba(212, 200, 232, 0.4);
+}
+
+body {
+  @apply antialiased;
+  font-feature-settings: "rlig" 1, "calt" 1;
+  -webkit-tap-highlight-color: rgba(157, 139, 184, 0.25);
+}
+
+.safe-area-padding {
+  padding-left: env(safe-area-inset-left, 0);
+  padding-right: env(safe-area-inset-right, 0);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgb(107 91 138 / 0.5), 0 0 0 4px rgb(243 239 248 / 0.9);
+}
+
+/* 垂直柔和渐变：上冷薰衣草 → 下暖粉紫，高亮度无硬边 */
+.hero-fluid-bg {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(
+    180deg,
+    var(--dawn-periwinkle) 0%,
+    var(--dawn-lavender) 22%,
+    var(--dawn-soft) 45%,
+    var(--rose-warm) 72%,
+    var(--rose-pale) 100%
+  );
+  background-size: 200% 200%;
+  animation: fluid-gradient 16s ease-in-out infinite;
+}
+
+/* 中心光晕 + 多光斑：柔和主光源与紫粉光溢，呼吸感 */
+.hero-fluid-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 50% at 50% 45%, var(--pearl-highlight) 0%, var(--glow-spill) 25%, transparent 55%),
+    radial-gradient(ellipse 45% 35% at 18% 25%, rgba(255, 255, 255, 0.28) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 30% at 82% 28%, rgba(248, 238, 252, 0.35) 0%, transparent 50%),
+    radial-gradient(ellipse 55% 35% at 50% 88%, rgba(252, 242, 250, 0.25) 0%, transparent 52%);
+  pointer-events: none;
+  animation: float-orbs 20s ease-in-out infinite, breathe-light 8s ease-in-out infinite;
+}
+
+/* 漂浮模糊光球：增强空间感与神秘感 */
+.hero-orbs {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.hero-orb {
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.78), rgba(214, 187, 255, 0.35), rgba(139, 92, 246, 0));
+  filter: blur(12px);
+  opacity: 0.45;
+  mix-blend-mode: screen;
+  animation: hero-orb-float 22s ease-in-out infinite;
+  animation-delay: calc(var(--orb-i, 0) * -6s);
+}
+.hero-orb:nth-child(1) {
+  left: -40px;
+  top: 10%;
+}
+.hero-orb:nth-child(2) {
+  right: -80px;
+  top: 45%;
+}
+.hero-orb:nth-child(3) {
+  left: 10%;
+  bottom: -40px;
+}
+@keyframes hero-orb-float {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.4;
+  }
+  25% {
+    transform: translate(18px, -26px) scale(1.03);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translate(-12px, 18px) scale(0.98);
+    opacity: 0.35;
+  }
+  75% {
+    transform: translate(10px, 12px) scale(1.02);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.4;
+  }
+}
+
+/* 微妙的噪点纹理 */
+.hero-fluid-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.025;
+  pointer-events: none;
+}
+
+@keyframes float-orbs {
+  0%, 100% { opacity: 1; transform: translate(0, 0) scale(1); }
+  33% { opacity: 0.92; transform: translate(1.5%, -0.8%) scale(1.015); }
+  66% { opacity: 0.96; transform: translate(-0.8%, 1.2%) scale(0.99); }
+}
+
+@keyframes breathe-light {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.88; }
+}
+
+/* 星尘光点：小光斑缓慢浮动 + 闪烁 */
+.hero-stardust {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.hero-dot {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+  animation: stardust 14s ease-in-out infinite;
+  animation-delay: calc(var(--dot-i, 0) * -0.7s);
+}
+.hero-dot:nth-child(1) { left: 12%; top: 18%; }
+.hero-dot:nth-child(2) { left: 88%; top: 22%; }
+.hero-dot:nth-child(3) { left: 25%; top: 75%; }
+.hero-dot:nth-child(4) { left: 72%; top: 68%; }
+.hero-dot:nth-child(5) { left: 50%; top: 35%; }
+.hero-dot:nth-child(6) { left: 8%; top: 55%; }
+.hero-dot:nth-child(7) { left: 92%; top: 48%; }
+.hero-dot:nth-child(8) { left: 38%; top: 12%; }
+.hero-dot:nth-child(9) { left: 62%; top: 82%; }
+.hero-dot:nth-child(10) { left: 15%; top: 42%; }
+.hero-dot:nth-child(11) { left: 78%; top: 38%; }
+.hero-dot:nth-child(12) { left: 45%; top: 58%; }
+.hero-dot:nth-child(13) { left: 55%; top: 18%; }
+.hero-dot:nth-child(14) { left: 28%; top: 88%; }
+@keyframes stardust {
+  0%, 100% { transform: translate(0, 0); opacity: 0.5; }
+  20% { transform: translate(5px, -4px); opacity: 1; }
+  40% { transform: translate(-2px, 6px); opacity: 0.65; }
+  60% { transform: translate(4px, 3px); opacity: 1; }
+  80% { transform: translate(-3px, -2px); opacity: 0.75; }
+}
+
+@keyframes fluid-gradient {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes shimmer-bg {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* 毛玻璃卡片：半透明白、发光边缘、柔和融入背景（学图内光感） */
+.glass-card {
+  background: rgba(255, 255, 255, 0.38);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.85) inset,
+    0 1px 0 0 rgba(255, 255, 255, 0.6),
+    0 0 48px -8px rgba(255, 255, 255, 0.2),
+    0 24px 48px -12px rgba(90, 60, 120, 0.08),
+    0 0 80px -24px rgba(200, 180, 220, 0.12);
+}
+
+/* 极简底线输入：焦点时底线渐变为主题色 + 展开动画 */
+.input-wrap-underline {
+  @apply relative w-full;
+}
+.input-wrap-underline .input-underline {
+  @apply w-full bg-transparent text-stone-800 pr-10;
+  border: none;
+  border-bottom: 1px solid rgba(120, 100, 140, 0.35);
+  border-radius: 0;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.input-wrap-underline .input-underline:hover {
+  border-bottom-color: rgba(157, 139, 184, 0.5);
+}
+.input-wrap-underline .input-underline:focus {
+  outline: none;
+  border-bottom-color: transparent;
+  box-shadow: none;
+}
+.input-wrap-underline .input-underline:focus + .input-underline-glow,
+.input-wrap-underline:focus-within .input-underline-glow {
+  transform: scaleX(1);
+  opacity: 1;
+}
+.input-underline-glow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(139, 92, 246, 0.95), rgba(214, 187, 255, 0.95));
+  border-radius: 1px;
+  transform: scaleX(0);
+  transform-origin: center;
+  opacity: 0.6;
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease;
+}
+.input-wrap-underline .input-icon {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+  color: rgba(120, 100, 140, 0.5);
+}
+.input-underline {
+  @apply w-full bg-transparent text-stone-800;
+  border: none;
+  border-bottom: 1px solid rgba(120, 100, 140, 0.35);
+  border-radius: 0;
+  transition: border-color 0.25s ease;
+}
+.input-underline:hover {
+  border-bottom-color: rgba(157, 139, 184, 0.5);
+}
+.input-underline:focus {
+  outline: none;
+  border-bottom-color: rgba(123, 107, 158, 0.9);
+}
+
+/* 浮雕感输入（备选） */
+.input-emboss {
+  @apply w-full rounded-lg text-stone-800;
+  border: none;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.6), inset 0 -1px 1px rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.5);
+  transition: box-shadow 0.2s, background 0.2s;
+}
+.input-emboss:focus {
+  outline: none;
+  background: rgba(243, 239, 248, 0.7);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.8), 0 0 0 1px rgba(157, 139, 184, 0.35);
+}
+
+/* 主按钮：深紫→粉紫渐变 + 发光投影 + Hover 变亮放大 */
+.btn-primary-gradient {
+  @apply relative overflow-hidden font-medium text-white border-0 cursor-pointer;
+  background: linear-gradient(135deg, #3d2a5c 0%, #5c4a78 30%, #8b6b9e 60%, #c9a8d4 100%);
+  background-size: 200% 100%;
+  box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+  transition: transform 0.28s ease, box-shadow 0.28s ease, filter 0.28s ease;
+}
+.btn-primary-gradient:hover {
+  transform: scale(1.03);
+  box-shadow: 0 12px 34px rgba(139, 92, 246, 0.36);
+  filter: brightness(1.06);
+}
+.btn-primary-gradient:hover::after {
+  opacity: 1;
+}
+.btn-primary-gradient::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.2) 45%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 55%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.btn-primary-gradient:active {
+  transform: scale(0.98);
+}
+
+/* 调整原生 date/time：保留系统选择器；桌面端优先使用系统图标，移动端配合自定义线条图标 */
+input[type="date"],
+input[type="time"] {
+  background-color: transparent;
+}
+
+@media (min-width: 768px) {
+  /* 桌面端：只用系统自带图标，隐藏自定义线条图标，确保可点击选择 */
+  .input-wrap-underline .input-icon {
+    display: none;
+  }
+}
+
+/* 结果页：神秘紫底 + 顶部柔和光泽 */
+.result-page-bg {
+  background: linear-gradient(180deg, rgba(235, 228, 245, 0.9) 0%, var(--mystic-1) 30%, var(--mystic-2) 100%);
+}
+
+/* 结果页：Fade In Up 依次揭晓 */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
+}
+.animate-fade-in-up-delay-1 { animation-delay: 0.1s; opacity: 0; }
+.animate-fade-in-up-delay-2 { animation-delay: 0.25s; opacity: 0; }
+.animate-fade-in-up-delay-3 { animation-delay: 0.4s; opacity: 0; }
+.animate-fade-in-up-delay-4 { animation-delay: 0.55s; opacity: 0; }
+
+/* 测算等待：五星阵旋转 + 光点流动 */
+@keyframes pentagram-rotate {
+  to { transform: rotate(360deg); }
+}
+@keyframes dot-pulse {
+  0%, 100% { opacity: 0.5; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+@keyframes dot-flow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+.pentagram-rotate {
+  animation: pentagram-rotate 12s linear infinite;
+}
+.dot-pulse {
+  animation: dot-pulse 2s ease-in-out infinite;
+}
+.dot-pulse:nth-child(1) { animation-delay: 0s; }
+.dot-pulse:nth-child(2) { animation-delay: 0.2s; }
+.dot-pulse:nth-child(3) { animation-delay: 0.4s; }
+.dot-pulse:nth-child(4) { animation-delay: 0.6s; }
+.dot-pulse:nth-child(5) { animation-delay: 0.8s; }
