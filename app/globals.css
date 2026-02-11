@@ -3,31 +3,63 @@
 @tailwind utilities;
 
 :root {
-  --morandi-cream: #f5f0f8;
-  --morandi-stone: #e8e4f0;
-  --ice-blue: #e8e4f5;
+  --morandi-cream: #f8f3ea;
+  --morandi-stone: #e7dfd2;
+  --ice-blue: #f2eee6;
   --font-sans: "Noto Sans SC", system-ui, sans-serif;
   --touch-min: 2.75rem;
-  /* 晨曦紫 → 浅玫瑰粉：高亮度、无硬边，参考图内色彩运营 */
-  --dawn-periwinkle: #e4dff0;
-  --dawn-lavender: #ebe2f4;
-  --dawn-soft: #f0e6f2;
-  --rose-warm: #f5e8f0;
-  --rose-pale: #faf0f5;
-  --pearl-highlight: rgba(255, 255, 255, 0.5);
-  --glow-spill: rgba(240, 228, 248, 0.35);
-  --mystic-1: #f3eff8;
-  --mystic-2: #ebe4f5;
-  --mystic-3: #e4dcef;
-  --mystic-4: #d4c8e8;
-  --mystic-5: #c9b8e0;
-  --mystic-glow: rgba(212, 200, 232, 0.4);
+  --text-main: #3d3430;
+  /* 香槟珍珠静奢风：奶油米白 → 浅香槟金 渐变 */
+  --champagne-cream: #fbf6ee;
+  --champagne-soft: #f5ebdc;
+  --champagne-satin: #eeddc4;
+  --champagne-gold: #d8c39a;
+  --champagne-deep: #b89a6c;
+  --pearl-highlight: rgba(255, 252, 245, 0.9);
+  --glow-spill: rgba(243, 224, 196, 0.6);
+  --mystic-1: #fbf6ee;
+  --mystic-2: #f5ebdc;
+  --mystic-3: #eeddc4;
+  --mystic-4: #e0cba8;
+  --mystic-5: #d2b890;
+  --mystic-glow: rgba(232, 204, 158, 0.4);
 }
 
 body {
   @apply antialiased;
   font-feature-settings: "rlig" 1, "calt" 1;
   -webkit-tap-highlight-color: rgba(157, 139, 184, 0.25);
+  color: var(--text-main);
+}
+
+/* 全局排版层级：Quiet Luxury 杂志感 */
+h1,
+h2 {
+  font-family: var(--font-noto-serif-sc), "PingFang SC", "Microsoft YaHei", Georgia, serif;
+  letter-spacing: 0.15em;
+  font-weight: 400;
+  color: var(--text-main);
+}
+
+h3,
+h4 {
+  font-family: var(--font-playfair), var(--font-noto-serif-sc), "PingFang SC", "Microsoft YaHei", Georgia, serif;
+  letter-spacing: 0.1em;
+  font-weight: 400;
+  color: var(--text-main);
+}
+
+p,
+span {
+  font-family: var(--font-noto-sans-sc), "Inter", "PingFang SC", "Microsoft YaHei", system-ui, -apple-system,
+    BlinkMacSystemFont, sans-serif;
+  line-height: 1.8;
+  color: var(--text-main);
+}
+
+/* 数字优先使用 Playfair Display，增加定制感 */
+.numeric-text {
+  font-family: var(--font-playfair), var(--font-noto-serif-sc), "PingFang SC", "Microsoft YaHei", Georgia, serif;
 }
 
 .safe-area-padding {
@@ -40,35 +72,35 @@ button:focus-visible,
 input:focus-visible,
 select:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px rgb(107 91 138 / 0.5), 0 0 0 4px rgb(243 239 248 / 0.9);
+  box-shadow: 0 0 0 2px rgba(184, 145, 85, 0.5), 0 0 0 4px rgba(252, 244, 230, 0.95);
 }
 
-/* 垂直柔和渐变：上冷薰衣草 → 下暖粉紫，高亮度无硬边 */
+/* 垂直柔和渐变：奶油米白 → 浅香槟金，高亮度无硬边 */
 .hero-fluid-bg {
   position: relative;
   min-height: 100vh;
   overflow: hidden;
   background: linear-gradient(
     180deg,
-    var(--dawn-periwinkle) 0%,
-    var(--dawn-lavender) 22%,
-    var(--dawn-soft) 45%,
-    var(--rose-warm) 72%,
-    var(--rose-pale) 100%
+    var(--champagne-cream) 0%,
+    var(--champagne-soft) 24%,
+    var(--champagne-satin) 52%,
+    var(--champagne-gold) 78%,
+    var(--champagne-cream) 100%
   );
   background-size: 200% 200%;
   animation: fluid-gradient 16s ease-in-out infinite;
 }
 
-/* 中心光晕 + 多光斑：柔和主光源与紫粉光溢，呼吸感 */
+/* 中心光晕 + 多光斑：柔和主光源与香槟金光溢，呼吸感 */
 .hero-fluid-bg::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 70% 50% at 50% 45%, var(--pearl-highlight) 0%, var(--glow-spill) 25%, transparent 55%),
-    radial-gradient(ellipse 45% 35% at 18% 25%, rgba(255, 255, 255, 0.28) 0%, transparent 50%),
-    radial-gradient(ellipse 40% 30% at 82% 28%, rgba(248, 238, 252, 0.35) 0%, transparent 50%),
-    radial-gradient(ellipse 55% 35% at 50% 88%, rgba(252, 242, 250, 0.25) 0%, transparent 52%);
+  background: radial-gradient(ellipse 70% 50% at 50% 45%, var(--pearl-highlight) 0%, var(--glow-spill) 26%, transparent 56%),
+    radial-gradient(ellipse 45% 35% at 18% 25%, rgba(255, 252, 245, 0.45) 0%, transparent 52%),
+    radial-gradient(ellipse 40% 30% at 82% 28%, rgba(243, 224, 196, 0.38) 0%, transparent 52%),
+    radial-gradient(ellipse 55% 35% at 50% 88%, rgba(242, 221, 191, 0.32) 0%, transparent 54%);
   pointer-events: none;
   animation: float-orbs 20s ease-in-out infinite, breathe-light 8s ease-in-out infinite;
 }
@@ -85,7 +117,7 @@ select:focus-visible {
   width: 220px;
   height: 220px;
   border-radius: 9999px;
-  background: radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.78), rgba(214, 187, 255, 0.35), rgba(139, 92, 246, 0));
+  background: radial-gradient(circle at 30% 25%, rgba(255, 252, 245, 0.9), rgba(243, 224, 196, 0.5), rgba(184, 145, 85, 0));
   filter: blur(12px);
   opacity: 0.45;
   mix-blend-mode: screen;
@@ -197,18 +229,17 @@ select:focus-visible {
   50% { opacity: 0.7; }
 }
 
-/* 毛玻璃卡片：半透明白、发光边缘、柔和融入背景（学图内光感） */
+/* 丝缎质感卡片：半透明奶油白 + 极淡金边框，静奢感 */
 .glass-card {
-  background: rgba(255, 255, 255, 0.38);
+  background: linear-gradient(145deg, rgba(255, 252, 245, 0.9), rgba(247, 235, 216, 0.96));
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(224, 200, 160, 0.3);
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.85) inset,
-    0 1px 0 0 rgba(255, 255, 255, 0.6),
-    0 0 48px -8px rgba(255, 255, 255, 0.2),
-    0 24px 48px -12px rgba(90, 60, 120, 0.08),
-    0 0 80px -24px rgba(200, 180, 220, 0.12);
+    0 0 0 1px rgba(255, 255, 255, 0.7) inset,
+    0 1px 0 0 rgba(255, 255, 255, 0.9),
+    0 20px 40px -18px rgba(120, 90, 50, 0.16),
+    0 0 52px -26px rgba(210, 186, 140, 0.2);
 }
 
 /* 极简底线输入：焦点时底线渐变为主题色 + 展开动画 */
@@ -216,14 +247,14 @@ select:focus-visible {
   @apply relative w-full;
 }
 .input-wrap-underline .input-underline {
-  @apply w-full bg-transparent text-stone-800 pr-10;
+  @apply w-full bg-transparent text-mystic-deep pr-10;
   border: none;
-  border-bottom: 1px solid rgba(120, 100, 140, 0.35);
+  border-bottom: 1px solid rgba(145, 115, 75, 0.35);
   border-radius: 0;
   transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 .input-wrap-underline .input-underline:hover {
-  border-bottom-color: rgba(157, 139, 184, 0.5);
+  border-bottom-color: rgba(166, 134, 90, 0.5);
 }
 .input-wrap-underline .input-underline:focus {
   outline: none;
@@ -241,7 +272,7 @@ select:focus-visible {
   right: 0;
   bottom: 0;
   height: 2px;
-  background: linear-gradient(90deg, rgba(139, 92, 246, 0.95), rgba(214, 187, 255, 0.95));
+  background: linear-gradient(90deg, rgba(184, 145, 85, 0.95), rgba(242, 221, 191, 0.95));
   border-radius: 1px;
   transform: scaleX(0);
   transform-origin: center;
@@ -253,24 +284,24 @@ select:focus-visible {
   right: 0;
   top: 50%;
   transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   pointer-events: none;
-  color: rgba(120, 100, 140, 0.5);
+  color: rgba(145, 115, 75, 0.6);
 }
 .input-underline {
-  @apply w-full bg-transparent text-stone-800;
+  @apply w-full bg-transparent text-mystic-deep;
   border: none;
-  border-bottom: 1px solid rgba(120, 100, 140, 0.35);
+  border-bottom: 1px solid rgba(145, 115, 75, 0.35);
   border-radius: 0;
   transition: border-color 0.25s ease;
 }
 .input-underline:hover {
-  border-bottom-color: rgba(157, 139, 184, 0.5);
+  border-bottom-color: rgba(166, 134, 90, 0.5);
 }
 .input-underline:focus {
   outline: none;
-  border-bottom-color: rgba(123, 107, 158, 0.9);
+  border-bottom-color: rgba(173, 142, 92, 0.9);
 }
 
 /* 浮雕感输入（备选） */
@@ -287,34 +318,38 @@ select:focus-visible {
   box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.8), 0 0 0 1px rgba(157, 139, 184, 0.35);
 }
 
-/* 主按钮：深紫→粉紫渐变 + 发光投影 + Hover 变亮放大 */
+/* 主按钮：镜面暖金渐变 + 金色弥散光晕 */
 .btn-primary-gradient {
   @apply relative overflow-hidden font-medium text-white border-0 cursor-pointer;
-  background: linear-gradient(135deg, #3d2a5c 0%, #5c4a78 30%, #8b6b9e 60%, #c9a8d4 100%);
+  background: linear-gradient(135deg, #b68a3a 0%, #d6b56a 40%, #f1dd9a 70%, #f8ecd0 100%);
   background-size: 200% 100%;
-  box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.5);
   transition: transform 0.28s ease, box-shadow 0.28s ease, filter 0.28s ease;
 }
 .btn-primary-gradient:hover {
   transform: scale(1.03);
-  box-shadow: 0 12px 34px rgba(139, 92, 246, 0.36);
+  box-shadow: 0 12px 36px rgba(212, 175, 55, 0.56);
   filter: brightness(1.06);
 }
 .btn-primary-gradient:hover::after {
-  opacity: 1;
+  opacity: 0.75;
 }
 .btn-primary-gradient::after {
   content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(
-    105deg,
+    90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.2) 45%,
-    rgba(255, 255, 255, 0.35) 50%,
-    transparent 55%
+    rgba(255, 255, 255, 0.1) 35%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(255, 255, 255, 0.1) 65%,
+    transparent 100%
   );
-  opacity: 0;
+  background-size: 220% 100%;
+  background-position: -120% 0;
+  opacity: 0.5;
+  animation: btn-sheen 2.2s linear infinite;
   transition: opacity 0.4s ease;
   pointer-events: none;
 }
@@ -322,22 +357,34 @@ select:focus-visible {
   transform: scale(0.98);
 }
 
-/* 调整原生 date/time：保留系统选择器；桌面端优先使用系统图标，移动端配合自定义线条图标 */
+@keyframes btn-sheen {
+  0% {
+    background-position: 120% 0;
+  }
+  100% {
+    background-position: -120% 0;
+  }
+}
+
+/* 调整原生 date/time：隐藏系统图标，仅保留自定义线条图标；点击整行触发选择器。
+   输入时使用 Playfair + Noto Serif，数字更具仪式感。 */
 input[type="date"],
 input[type="time"] {
   background-color: transparent;
+  font-family: var(--font-playfair), var(--font-noto-serif-sc), "PingFang SC", "Microsoft YaHei", Georgia, serif;
 }
-
-@media (min-width: 768px) {
-  /* 桌面端：只用系统自带图标，隐藏自定义线条图标，确保可点击选择 */
-  .input-wrap-underline .input-icon {
-    display: none;
-  }
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="date"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-clear-button,
+input[type="time"]::-webkit-clear-button,
+input[type="time"]::-webkit-inner-spin-button,
+input[type="time"]::-webkit-calendar-picker-indicator {
+  display: none;
 }
 
 /* 结果页：神秘紫底 + 顶部柔和光泽 */
 .result-page-bg {
-  background: linear-gradient(180deg, rgba(235, 228, 245, 0.9) 0%, var(--mystic-1) 30%, var(--mystic-2) 100%);
+  background: linear-gradient(180deg, rgba(251, 246, 238, 0.95) 0%, var(--mystic-1) 35%, var(--mystic-2) 100%);
 }
 
 /* 结果页：Fade In Up 依次揭晓 */

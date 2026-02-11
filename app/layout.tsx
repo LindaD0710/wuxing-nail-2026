@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Noto_Sans_SC, Noto_Serif_SC } from "next/font/google";
+import { Noto_Sans_SC, Noto_Serif_SC, Playfair_Display, Montserrat } from "next/font/google";
 import "./globals.css";
 
 const noto = Noto_Sans_SC({
@@ -16,11 +16,25 @@ const notoSerif = Noto_Serif_SC({
   display: "swap",
 });
 
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-playfair",
+  display: "swap",
+});
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["300", "400", "500"],
+  variable: "--font-montserrat",
+  display: "swap",
+});
+
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: "#2d1b4e",
+  themeColor: "#d3b27a",
 };
 
 export const metadata: Metadata = {
@@ -34,8 +48,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN" className={`${noto.variable} ${notoSerif.variable}`}>
-      <body className="min-h-screen text-stone-800 font-sans antialiased safe-area-padding">
+    <html
+      lang="zh-CN"
+      className={`${noto.variable} ${notoSerif.variable} ${playfair.variable} ${montserrat.variable}`}
+    >
+      <body className="min-h-screen text-mystic-deep font-sans antialiased safe-area-padding">
         {children}
       </body>
     </html>

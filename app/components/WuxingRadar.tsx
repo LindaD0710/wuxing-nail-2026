@@ -53,7 +53,7 @@ export default function WuxingRadar({
         role="img"
       >
         <defs>
-          {/* 神秘紫 + 光泽：中心亮、边缘淡，发光能量场 */}
+          {/* 香槟金径向渐变：中心亮、边缘淡，静奢能量场 */}
           <radialGradient
             id="radar-glow"
             cx="50%"
@@ -62,12 +62,12 @@ export default function WuxingRadar({
             fx="50%"
             fy="50%"
           >
-            <stop offset="0%" stopColor="rgba(184, 169, 212, 0.6)" />
-            <stop offset="45%" stopColor="rgba(157, 139, 184, 0.35)" />
-            <stop offset="100%" stopColor="rgba(123, 107, 158, 0.08)" />
+            <stop offset="0%" stopColor="rgba(232, 204, 158, 0.7)" />
+            <stop offset="45%" stopColor="rgba(210, 186, 140, 0.4)" />
+            <stop offset="100%" stopColor="rgba(166, 137, 92, 0.08)" />
           </radialGradient>
         </defs>
-        {/* 背景网格：更细的轴线（紫色调） */}
+        {/* 背景网格：更细的轴线（暖金调） */}
         {axisPoints.map((p, i) => (
           <line
             key={i}
@@ -75,25 +75,25 @@ export default function WuxingRadar({
             y1={CY}
             x2={p.x}
             y2={p.y}
-            stroke="rgba(157, 139, 184, 0.25)"
-            strokeWidth="0.4"
+              stroke="rgba(182, 150, 102, 0.25)"
+            strokeWidth="0.3"
           />
         ))}
         {/* 背景五边形：细线 */}
         <polygon
           points={axisPoints.map((p) => `${p.x},${p.y}`).join(" ")}
           fill="none"
-          stroke="rgba(157, 139, 184, 0.3)"
-          strokeWidth="0.45"
+          stroke="rgba(182, 150, 102, 0.3)"
+          strokeWidth="0.38"
         />
         {/* 数据填充：紫色径向渐变，光泽力场感 */}
         <polygon
           points={polygonPoints}
           fill="url(#radar-glow)"
-          stroke="rgba(123, 107, 158, 0.45)"
+          stroke="rgba(166, 137, 92, 0.45)"
           strokeWidth="0.6"
         />
-        {/* 顶点标签 */}
+        {/* 顶点标签：统一复古铜棕色 */}
         {axisPoints.map((p, i) => (
           <text
             key={i}
@@ -101,14 +101,17 @@ export default function WuxingRadar({
             y={p.y * 0.95 + CY * 0.05}
             textAnchor="middle"
             dominantBaseline="middle"
-            className="fill-mystic-soft text-[10px] font-medium"
-            style={{ fontSize: "11px" }}
+            className="text-[10px] font-medium"
+            style={{ fontSize: "11px", fill: "#8B5E3C" }}
           >
             {WUXING_LABELS[i]}
           </text>
         ))}
       </svg>
-      <figcaption className="text-center text-mystic-soft text-xs mt-2">
+      <figcaption
+        className="font-label text-center text-[10px] mt-0 tracking-[0.2em]"
+        style={{ color: "#8B5E3C" }}
+      >
         五行能量分布
       </figcaption>
     </figure>

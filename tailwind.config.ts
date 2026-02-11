@@ -9,47 +9,80 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        /* 神秘紫主色 + 光泽感 */
+        /* 香槟珍珠静奢风主色 */
         mystic: {
-          deep: "#2d1b4e",
-          mid: "#4a3a6b",
-          soft: "#6b5b8a",
-          light: "#9d8bb8",
-          lavender: "#b8a9d4",
-          gloss: "#d4c8e8",
-          shimmer: "#ebe4f5",
-          cream: "#f3eff8",
+          deep: "#4a3a2a",       // 深咖 / 炭灰棕
+          mid: "#725b3b",        // 中深香槟金
+          soft: "#9b7a4a",       // 柔和金棕
+          light: "#cfb48a",      // 浅香槟金
+          lavender: "#e8d7b5",   // 珍珠暖光
+          gloss: "#f4e7cf",      // 珍珠光泽
+          shimmer: "#f8f1e3",    // 香槟雾光
+          cream: "#fbf6ee",      // 奶油米白
         },
         morandi: {
-          cream: "#f5f0f8",
-          stone: "#e8e4f0",
-          sage: "#9d8bb8",
-          dust: "#b8a9c4",
-          mist: "#a89bc4",
-          blush: "#c4b5d4",
-          clay: "#7b6b9e",
+          cream: "#f8f3ea",
+          stone: "#e7dfd2",
+          sage: "#c1b39a",
+          dust: "#b19d86",
+          mist: "#d6c8b0",
+          blush: "#e5d4bc",
+          clay: "#8a6f4b",
         },
         ice: {
-          blue: "#e8e4f5",
-          mint: "#e0e4f0",
-          lavender: "#ebe4f8",
-          peach: "#f0e8f5",
+          blue: "#f2eee6",
+          mint: "#ebe6dc",
+          lavender: "#f5eee2",
+          peach: "#f8f0e4",
         },
         pearl: {
-          DEFAULT: "#f5f0f8",
-          light: "#faf8fc",
-          pink: "#efe8f2",
-          lavender: "#ebe4f5",
+          DEFAULT: "#f8f3ea",
+          light: "#fcf8f0",
+          pink: "#f2e6dd",
+          lavender: "#efe4d6",
         },
         aurora: {
-          mint: "#e4e0f0",
-          blue: "#e8e4f5",
-          violet: "#efe8f5",
+          mint: "#f0e8da",
+          blue: "#f4ecde",
+          violet: "#f6efe2",
         },
       },
       fontFamily: {
-        sans: ["var(--font-noto-sans-sc)", "system-ui", "sans-serif"],
-        serif: ["var(--font-noto-serif-sc)", "Georgia", "serif"],
+        // 全局无衬线正文：Noto Sans SC 为中文主字体，Inter / 系统为西文兜底
+        sans: [
+          "var(--font-noto-sans-sc)",
+          "Inter",
+          "PingFang SC",
+          "Microsoft YaHei",
+          "system-ui",
+          "sans-serif",
+        ],
+        // 全局衬线：优先思源宋体，再退到系统中文与衬线
+        serif: [
+          "var(--font-noto-serif-sc)",
+          "PingFang SC",
+          "Microsoft YaHei",
+          "Georgia",
+          "serif",
+        ],
+        // 标题辅助：Playfair Display，用于英文字母/数字装饰
+        title: [
+          "var(--font-playfair)",
+          "var(--font-noto-serif-sc)",
+          "PingFang SC",
+          "Microsoft YaHei",
+          "Georgia",
+          "serif",
+        ],
+        // Label：Montserrat，用于英文/拉丁小标签
+        label: [
+          "var(--font-montserrat)",
+          "Inter",
+          "PingFang SC",
+          "Microsoft YaHei",
+          "system-ui",
+          "sans-serif",
+        ],
       },
       animation: {
         "shimmer": "shimmer 8s ease-in-out infinite",
