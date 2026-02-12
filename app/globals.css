@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Adobe Garamond Pro：请将 .woff2 放入 public/fonts/，无文件时自动回退到 EB Garamond */
+@font-face {
+  font-family: "Adobe Garamond Pro";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/AGaramondPro-Semibold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Adobe Garamond Pro";
+  font-style: italic;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/AGaramondPro-SemiboldItalic.woff2") format("woff2");
+}
+
 :root {
   --morandi-cream: #f8f3ea;
   --morandi-stone: #e7dfd2;
@@ -23,6 +39,7 @@
   --mystic-4: #e0cba8;
   --mystic-5: #d2b890;
   --mystic-glow: rgba(232, 204, 158, 0.4);
+  --font-adobe-garamond: "Adobe Garamond Pro", var(--font-eb-garamond), Georgia, serif;
 }
 
 body {
@@ -55,6 +72,15 @@ span {
     BlinkMacSystemFont, sans-serif;
   line-height: 1.8;
   color: var(--text-main);
+}
+
+/* 页面主标题：杂志感字间距，整体更优雅 */
+.title-elegant {
+  letter-spacing: 0.2em;
+  font-feature-settings: "liga" 1, "kern" 1;
+}
+.title-elegant span[class*="font-title"] {
+  letter-spacing: 0.18em;
 }
 
 /* 数字优先使用 Playfair Display，增加定制感 */

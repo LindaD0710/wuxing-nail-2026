@@ -1,25 +1,139 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import type { NailRecommendationResult } from "@/app/types/nail";
 import WuxingRadar from "@/app/components/WuxingRadar";
 import PerceivingOverlay from "@/app/components/PerceivingOverlay";
+
+const STORAGE_USER_ID = "nail_user_id";
+const STORAGE_GRANT = "nail_grant";
+
+function getOrCreateUserId(): string {
+  if (typeof window === "undefined") return "";
+  let id = localStorage.getItem(STORAGE_USER_ID);
+  if (!id) {
+    id = crypto.randomUUID?.() ?? `anon-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    localStorage.setItem(STORAGE_USER_ID, id);
+  }
+  return id;
+}
+
+function getStoredGrant(): { calculations_remaining: number; expires_at: string } | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(STORAGE_GRANT);
+    if (!raw) return null;
+    const g = JSON.parse(raw) as { calculations_remaining?: number; expires_at?: string };
+    if (typeof g.calculations_remaining !== "number" || !g.expires_at) return null;
+    return { calculations_remaining: g.calculations_remaining, expires_at: g.expires_at };
+  } catch {
+    return null;
+  }
+}
+
+function setStoredGrant(grant: { calculations_remaining: number; expires_at: string } | null) {
+  if (typeof window === "undefined") return;
+  if (grant) localStorage.setItem(STORAGE_GRANT, JSON.stringify(grant));
+  else localStorage.removeItem(STORAGE_GRANT);
+}
+
+function isValidGrant(g: { calculations_remaining: number; expires_at: string } | null): boolean {
+  if (!g || g.calculations_remaining <= 0) return false;
+  return new Date(g.expires_at) > new Date();
+}
 
 const currentYear = new Date().getFullYear();
 const currentMonth = new Date().getMonth() + 1;
 const currentDay = new Date().getDate();
 
 export default function Home() {
-  const [view, setView] = useState<"form" | "result">("form");
+  const [view, setView] = useState<"redeem" | "form" | "result">("form");
+  const [userId, setUserId] = useState("");
+  const [grant, setGrant] = useState<{ calculations_remaining: number; expires_at: string } | null>(null);
   const [result, setResult] = useState<NailRecommendationResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [redeemCode, setRedeemCode] = useState("");
+  const [redeemError, setRedeemError] = useState<string | null>(null);
+  const [redeemLoading, setRedeemLoading] = useState(false);
 
   const [birthYear, setBirthYear] = useState(1995);
   const [birthMonth, setBirthMonth] = useState(5);
   const [birthDay, setBirthDay] = useState(15);
   const [birthTime, setBirthTime] = useState<string>("");
   const [showConsultModal, setShowConsultModal] = useState(false);
+
+  useEffect(() => {
+    const id = getOrCreateUserId();
+    setUserId(id);
+    const g = getStoredGrant();
+    setGrant(g);
+    if (!isValidGrant(g)) setView("redeem");
+  }, []);
+
+  const refreshGrant = useCallback(async (): Promise<{ calculations_remaining: number; expires_at: string } | null> => {
+    if (!userId) return null;
+    try {
+      const res = await fetch("/api/check-grant", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: userId }),
+      });
+      const data = await res.json();
+      if (data.valid && data.calculations_remaining != null && data.expires_at) {
+        const g = { calculations_remaining: data.calculations_remaining, expires_at: data.expires_at };
+        setStoredGrant(g);
+        setGrant(g);
+        return g;
+      } else {
+        setStoredGrant(null);
+        setGrant(null);
+        return null;
+      }
+    } catch {
+      return null;
+    }
+  }, [userId]);
+
+  const handleRedeem = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setRedeemError(null);
+    const code = redeemCode.trim();
+    if (!code) {
+      setRedeemError("请输入兑换码");
+      return;
+    }
+    if (!userId) {
+      setRedeemError("请刷新页面后重试");
+      return;
+    }
+    setRedeemLoading(true);
+    try {
+      const res = await fetch("/api/redeem", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, user_id: userId }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setRedeemError(data?.error || "兑换失败，请稍后重试");
+        return;
+      }
+      const g = {
+        calculations_remaining: data.calculations_remaining as number,
+        expires_at: data.expires_at as string,
+      };
+      setStoredGrant(g);
+      setGrant(g);
+      setView("form");
+      setRedeemCode("");
+    } catch {
+      setRedeemError("网络异常，请稍后重试");
+    } finally {
+      setRedeemLoading(false);
+    }
+  };
 
   const getColorSwatchStyle = (label: string): React.CSSProperties => {
     const name = label.trim();
@@ -108,12 +222,17 @@ export default function Home() {
 
   const submit = async () => {
     setError(null);
+    if (!userId || !isValidGrant(grant)) {
+      setView("redeem");
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch("/api/nail-recommendation", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          user_id: userId,
           birth_year: birthYear,
           birth_month: birthMonth,
           birth_day: birthDay,
@@ -122,9 +241,14 @@ export default function Home() {
       });
       const data = await res.json();
       if (!res.ok) {
+        if (res.status === 403) {
+          const newGrant = await refreshGrant();
+          if (!newGrant || !isValidGrant(newGrant)) setView("redeem");
+        }
         setError(data?.error || data?.detail || "请求失败");
         return;
       }
+      await refreshGrant();
       setResult(data as NailRecommendationResult);
       setView("result");
     } catch (e) {
@@ -140,8 +264,10 @@ export default function Home() {
 
     return (
       <main className="min-h-screen result-page-bg text-mystic-deep overflow-y-auto flex flex-col pb-[env(safe-area-inset-bottom,0)]">
-        <h1 className="animate-fade-in-up text-lg sm:text-2xl font-title text-[#8B5E3C] text-center py-4 tracking-[0.1em] sm:tracking-[0.12em] shrink-0">
-          2026开运美甲
+        <h1 className="title-elegant animate-fade-in-up text-lg sm:text-2xl text-[#8B5E3C] text-center py-4 shrink-0">
+          <span className="font-year font-semibold italic">2026</span>
+          <span className="text-[#8B5E3C]/75 mx-2 font-serif text-[0.9em]" aria-hidden>·</span>
+          <span className="font-title font-medium">开运美甲</span>
         </h1>
         <p className="font-sans text-center text-[11px] sm:text-xs text-morandi-dust italic tracking-[0.32em] mb-3">
           —— 你的专属指尖能量报告 ——
@@ -384,6 +510,65 @@ export default function Home() {
     );
   }
 
+  if (view === "redeem" || (view === "form" && !isValidGrant(grant))) {
+    return (
+      <main className="hero-fluid-bg flex flex-col items-center justify-center px-4 py-8 sm:px-6 sm:py-10 relative min-h-screen">
+        <div className="hero-orbs" aria-hidden>
+          {[...Array(3)].map((_, i) => (
+            <span key={i} className="hero-orb" style={{ "--orb-i": i } as React.CSSProperties} />
+          ))}
+        </div>
+        <div className="hero-stardust" aria-hidden>
+          {[...Array(14)].map((_, i) => (
+            <span key={i} className="hero-dot" style={{ "--dot-i": i } as React.CSSProperties} />
+          ))}
+        </div>
+        <div className="w-full max-w-sm sm:max-w-md flex flex-col items-center relative z-10">
+          <div className="w-full glass-card rounded-2xl pt-8 pb-6 px-6 sm:pt-10 sm:pb-8 sm:px-8 flex flex-col items-center">
+            <h1 className="title-elegant text-2xl sm:text-3xl text-center mb-3 text-mystic-deep">
+              <span className="font-year font-semibold italic">2026</span>
+              <span className="text-mystic-deep/70 mx-2 font-serif text-[0.9em]" aria-hidden>·</span>
+              <span className="font-title font-medium">灵感指尖</span>
+            </h1>
+            <p className="font-sans text-mystic-deep/85 text-[11px] sm:text-xs mb-7 sm:mb-9 text-center max-w-xs sm:max-w-sm tracking-[0.05em]">
+              使用兑换码解锁，90 天内可测算 3 次
+            </p>
+            <form className="w-full space-y-4" onSubmit={handleRedeem}>
+              <div>
+                <label className="block font-sans text-mystic-deep/90 text-[12px] mb-1.5 tracking-[0.2em] leading-relaxed font-light" htmlFor="redeem-code">
+                  兑换码
+                </label>
+                <div className="input-wrap-underline">
+                  <input
+                    id="redeem-code"
+                    type="text"
+                    value={redeemCode}
+                    onChange={(e) => setRedeemCode(e.target.value)}
+                    placeholder="请输入兑换码"
+                    className="input-underline pl-3 pr-0 py-3 text-base sm:text-sm min-h-[var(--touch-min)] sm:min-h-0 font-serif w-full"
+                    aria-label="兑换码"
+                    autoComplete="off"
+                  />
+                  <span className="input-underline-glow" aria-hidden />
+                </div>
+              </div>
+              {redeemError && (
+                <p className="text-red-500/90 text-sm leading-relaxed" role="alert">{redeemError}</p>
+              )}
+              <button
+                type="submit"
+                disabled={redeemLoading}
+                className="btn-primary-gradient w-full min-h-[var(--touch-min)] py-3.5 rounded-full text-sm touch-manipulation disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {redeemLoading ? "兑换中…" : "兑换并开始测算"}
+              </button>
+            </form>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="hero-fluid-bg flex flex-col items-center justify-center px-4 py-8 sm:px-6 sm:py-10 relative">
       {loading && <PerceivingOverlay />}
@@ -401,12 +586,19 @@ export default function Home() {
       </div>
       <div className="w-full max-w-sm sm:max-w-md flex flex-col items-center relative z-10">
         <div className="w-full glass-card rounded-2xl pt-8 pb-6 px-6 sm:pt-10 sm:pb-8 sm:px-8 flex flex-col items-center">
-          <h1 className="font-title text-2xl sm:text-3xl text-center mb-3 tracking-[0.1em] sm:tracking-[0.12em] text-mystic-deep">
-            2026 · 灵感指尖
+          <h1 className="title-elegant text-2xl sm:text-3xl text-center mb-3 text-mystic-deep">
+            <span className="font-year font-semibold italic">2026</span>
+            <span className="text-mystic-deep/70 mx-2 font-serif text-[0.9em]" aria-hidden>·</span>
+            <span className="font-title font-medium">灵感指尖</span>
           </h1>
-          <p className="font-sans text-mystic-deep/85 text-[11px] sm:text-xs mb-7 sm:mb-9 text-center max-w-xs sm:max-w-sm tracking-[0.05em]">
+          <p className={`font-sans text-mystic-deep/85 text-[11px] sm:text-xs text-center max-w-xs sm:max-w-sm tracking-[0.05em] ${grant && isValidGrant(grant) ? "mb-2" : "mb-7 sm:mb-9"}`}>
             输入出生时刻，开启你的本命能量色
           </p>
+          {grant && isValidGrant(grant) && (
+            <p className="font-sans text-mystic-deep/70 text-[11px] mb-7 sm:mb-9 text-center">
+              剩余 {grant.calculations_remaining} 次测算
+            </p>
+          )}
 
           <form
             className="w-full space-y-6"

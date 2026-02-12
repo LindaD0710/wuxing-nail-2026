@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Noto_Sans_SC, Noto_Serif_SC, Playfair_Display, Montserrat } from "next/font/google";
+import { Noto_Sans_SC, Noto_Serif_SC, Playfair_Display, Montserrat, EB_Garamond } from "next/font/google";
 import "./globals.css";
 
 const noto = Noto_Sans_SC({
@@ -25,8 +25,16 @@ const playfair = Playfair_Display({
 
 const montserrat = Montserrat({
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
+  weight: ["300", "400", "500", "600"],
   variable: "--font-montserrat",
+  display: "swap",
+});
+
+const ebGaramond = EB_Garamond({
+  subsets: ["latin"],
+  weight: ["500", "600"],
+  style: ["normal", "italic"],
+  variable: "--font-eb-garamond",
   display: "swap",
 });
 
@@ -50,7 +58,7 @@ export default function RootLayout({
   return (
     <html
       lang="zh-CN"
-      className={`${noto.variable} ${notoSerif.variable} ${playfair.variable} ${montserrat.variable}`}
+      className={`${noto.variable} ${notoSerif.variable} ${playfair.variable} ${montserrat.variable} ${ebGaramond.variable}`}
     >
       <body className="min-h-screen text-mystic-deep font-sans antialiased safe-area-padding">
         {children}

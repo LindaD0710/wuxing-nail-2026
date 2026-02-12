@@ -83,6 +83,13 @@ const config: Config = {
           "system-ui",
           "sans-serif",
         ],
+        // 年份数字：Georgia，经典衬线、系统内置
+        year: [
+          "Georgia",
+          "var(--font-adobe-garamond)",
+          "var(--font-eb-garamond)",
+          "serif",
+        ],
       },
       animation: {
         "shimmer": "shimmer 8s ease-in-out infinite",
